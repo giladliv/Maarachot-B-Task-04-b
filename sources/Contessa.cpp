@@ -30,4 +30,6 @@ void Contessa::block(Player& player)
 
     // clean his last action
     player.cleanLastAction();
+
+    _game.updateGameSession();
 }

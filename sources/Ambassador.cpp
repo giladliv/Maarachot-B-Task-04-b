@@ -47,8 +47,12 @@ void Ambassador::block(Player& player)
         throw runtime_error("not blocking a steal act");
     }
 
+    // make the self transfare
     this->incCoins(-2);
     player.incCoins(2);
 
     player.cleanLastAction();
+    
+    // after good blocking update that "The Game Is On" (Sherlock Holmes)
+    _game.updateGameSession();
 }

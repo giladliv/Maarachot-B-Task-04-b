@@ -21,8 +21,13 @@ void Duke::block(Player& other)
     {
         throw runtime_error("foreign_aid hasn't been occured");
     }
+
+    // clear las action and init the coins from before
     other.cleanLastAction();
     other.incCoins(-2);
+    
+    // after good blocking update that "The Game Is On" (Sherlock Holmes)
+    _game.updateGameSession();
 }
 
 void Duke::tax()

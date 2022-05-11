@@ -30,6 +30,9 @@ void Captain::block(Player& player)
     player.incCoins(2);
 
     player.cleanLastAction();
+    
+    // after good blocking update that "The Game Is On" (Sherlock Holmes)
+    _game.updateGameSession();
 }
 
 void Captain::steal(Player& player)
