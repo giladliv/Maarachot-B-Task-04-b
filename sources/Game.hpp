@@ -24,6 +24,7 @@ namespace coup
         vector<string> _players;
         unordered_map<string, bool> _playersInGame;
         int _countInGame;
+        bool _gameInSession;
         bool isActive(unsigned int index);
         
     public:
@@ -39,6 +40,8 @@ namespace coup
         void setNextInRound();
         void throwIfNotEnoughPlayers();
         bool isGameFull();
+        bool isGameInSession() { return _gameInSession; }
+        void updateGameSession() { _gameInSession = true; }
         
     };
     

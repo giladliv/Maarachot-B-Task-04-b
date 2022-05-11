@@ -39,6 +39,7 @@ namespace coup
             void throwIfMaxCoins() const;
             void throwIfNotInSameGame(const Player& player);
             void throwForBlocking(Player& player, const vector<string>& roles = {});
+            void throwIfGameNotInSession();
     };
     
     

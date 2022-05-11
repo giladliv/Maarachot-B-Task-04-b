@@ -6,10 +6,19 @@ Player::Player(Game& game, const string& name, const string& role) : _game(game)
 {
     _name = name;
     _role = role;
+    // check if game is full
     if (_game.isGameFull())
     {
         throw runtime_error("the game is full");
     }
+
+    // check if game has been started
+    if (_game.isGameInSession())
+    {
+        throw runtime_error("the game has been started - cannot join");
+    }
+
+    // check if the player already started
     if (!_game.addPlayer(name))
     {
         throw ("player name alrady exists");
@@ -18,23 +27,6 @@ Player::Player(Game& game, const string& name, const string& role) : _game(game)
 
 Player::~Player()
 {
-}
-
-void Player::throwIfMaxCoins() const
-{
-    if (_coins >= MAX_COINS)
-    {
-        throw runtime_error("you cannot do this action\n"
-                            "you reached 10 coins - you can only make a \"coup\" action");
-    }
-}
-
-void Player::throwIfNotYourTurn() const
-{
-    if (_game.turn() != _name)
-    {
-        throw runtime_error("this is not your turn");
-    }
 }
 
 void Player::income()
@@ -111,6 +103,23 @@ int Player::coins() const
     return _coins;
 }
 
+void Player::throwIfMaxCoins() const
+{
+    if (_coins >= MAX_COINS)
+    {
+        throw runtime_error("you cannot do this action\n"
+                            "you reached 10 coins - you can only make a \"coup\" action");
+    }
+}
+
+void Player::throwIfNotYourTurn() const
+{
+    if (_game.turn() != _name)
+    {
+        throw runtime_error("this is not your turn");
+    }
+}
+
 void Player::throwIfNotInSameGame(const Player& player)
 {
     if (&(this->_game) != &(player._game))
@@ -133,6 +142,7 @@ void Player::throwForBlocking(Player& player, const vector<string>& roles)
 {
     _game.throwIfNotEnoughPlayers();
     throwIfNotInSameGame(player);
+    // check thatit isnt the players turn
     if (_game.turn() == player.getName())
     {
         throw runtime_error("blocking failed because the blocked player turn has arrived");
@@ -145,7 +155,12 @@ void Player::throwForBlocking(Player& player, const vector<string>& roles)
             throw runtime_error("the player must be: " + roleOther);
         }
     }
+}
 
-    // check thatit isnt the players turn
-    
+void Player::throwIfGameNotInSession()
+{
+    if (!_game.isGameInSession())
+    {
+        throw runtime_error("the game hasn't been started");
+    }
 }

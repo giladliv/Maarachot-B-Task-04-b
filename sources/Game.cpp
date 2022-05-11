@@ -2,7 +2,7 @@
 using coup::Game;
 
 
-Game::Game() : _playerIndex(0), _countInGame(0)
+Game::Game() : _playerIndex(0), _countInGame(0), _gameInSession(false)
 {
 }
 
@@ -39,6 +39,10 @@ string Game::winner()
     if (_countInGame != 1)
     {
         throw runtime_error("there is no winner yet");
+    }
+    if (_players.size() == 1)
+    {
+        throw runtime_error("there is only one player");
     }
     return (players()[0]);
 }
@@ -136,7 +140,11 @@ void Game::setNextInRound()
         {
             _playerIndex = (_playerIndex + 1) % len;
         } while (!isActive(_playerIndex));
+        
+        // after each (non-block) move that ocured successfuly update that the game has been started
+        updateGameSession();
     }
+
 }
 
 void Game::throwIfNotEnoughPlayers()

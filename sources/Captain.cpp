@@ -14,6 +14,9 @@ Captain::~Captain()
 
 void Captain::block(Player& player)
 {
+    // before each move that ocured update that the game has been started - even if not good
+    _game.updateGameSession();
+
     throwForBlocking(player, {"Captain"});
 
     // check his last action
