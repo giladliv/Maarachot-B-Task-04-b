@@ -104,21 +104,41 @@ int Player::coins() const
     return _coins;
 }
 
+/**
+ * @brief a uniqe string that identify the player - role and name
+ * 
+ * @return string 
+ */
 string Player::getRoleAndName()
 {
     return (_role + "::" + _name);
 }
 
+/**
+ * @brief get if the player is active in the game
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Player::getActive() const
 {
     return _active;
 }
 
+/**
+ * @brief set activity of player in game
+ * 
+ * @param status true if active
+ */
 void Player::setActive(bool status)
 {
     _active = status;
 }
 
+/**
+ * @brief the function throws an exception if the player have 10 coins - for functions that not coup
+ * 
+ */
 void Player::throwIfMaxCoins() const
 {
     if (_coins >= MAX_COINS)
@@ -128,14 +148,24 @@ void Player::throwIfMaxCoins() const
     }
 }
 
+/**
+ * @brief if it is not the players turn an exception will be thrown
+ * 
+ */
 void Player::throwIfNotYourTurn()
 {
+    // if not the players turn by id string
     if (!_game.isPlayerTurn(getRoleAndName()))
     {
         throw runtime_error("this is not your turn");
     }
 }
 
+/**
+ * @brief an exception will be thrown if a player doesn't match the same game - the same object
+ * 
+ * @param player 
+ */
 void Player::throwIfNotInSameGame(const Player& player)
 {
     if (&(this->_game) != &(player._game))
@@ -144,25 +174,44 @@ void Player::throwIfNotInSameGame(const Player& player)
     }
 }
 
+/**
+ * @brief by giving an integer the coins will added
+ * 
+ * @param diff 
+ */
 void Player::incCoins(int diff)
 {
     _coins += diff;
 }
 
+/**
+ * @brief returns the last action that the player did - for non blocking actions
+ * 
+ * @return vector<string> 
+ */
 vector<string> Player::getLastAction()
 {
     return _lastAction;
 }
 
+/**
+ * @brief the function check all the parameters for making a blocking action.
+ * this is universal check for every blocker
+ * 
+ * @param player 
+ * @param roles specific rolees that player must have
+ */
 void Player::throwForBlocking(Player& player, const vector<string>& roles)
 {
     _game.throwIfNotEnoughPlayers();
     throwIfNotInSameGame(player);
-    // check thatit isnt the players turn
+
+    // check that it isn't the players turn
     if (_game.isPlayerTurn(player.getRoleAndName()))
     {
         throw runtime_error("blocking failed because the blocked player turn has arrived");
     }
+
     // check that the player ia an assasin
     for (const string& roleOther: roles)
     {
@@ -173,6 +222,10 @@ void Player::throwForBlocking(Player& player, const vector<string>& roles)
     }
 }
 
+/**
+ * @brief if game hasn't been started throw an  exception
+ * 
+ */
 void Player::throwIfGameNotInSession()
 {
     if (!_game.isGameInSession())

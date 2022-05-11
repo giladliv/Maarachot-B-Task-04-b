@@ -17,11 +17,11 @@ void Ambassador::transfer(Player& srcPlyr, Player& dstPlyr)
     
     throwIfNotYourTurn();   // check if this is the player's turn
     throwIfMaxCoins();      // check if the player doesnwt reach to the max coin number
-    throwIfNotInSameGame(srcPlyr);
-    throwIfNotInSameGame(dstPlyr);
+    throwIfNotInSameGame(srcPlyr);  // check that the src player is in the same game as the Ambassador
+    throwIfNotInSameGame(dstPlyr);  // check that the dest player is in the same game as the Ambassador
 
 
-    _game.moveAmount(srcPlyr.getRoleAndName(), dstPlyr.getRoleAndName(), 1, false);
+    _game.moveAmount(srcPlyr.getRoleAndName(), dstPlyr.getRoleAndName(), 1);
 
     // update the action
     _lastAction = vector<string>{"transfer", srcPlyr.getRoleAndName(), dstPlyr.getRoleAndName()};

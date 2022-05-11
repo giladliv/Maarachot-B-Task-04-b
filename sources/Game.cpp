@@ -11,6 +11,11 @@ Game::~Game()
 {
 }
 
+/**
+ * @brief retrives the turn of a current player
+ * 
+ * @return string 
+ */
 string Game::turn()
 {
     if (_countInGame == 0)
@@ -35,6 +40,11 @@ vector<string> Game::players()
     return(playersCurr);
 }
 
+/**
+ * @brief gives the winner of the game
+ * 
+ * @return string 
+ */
 string Game::winner()
 {
     if (_countInGame != 1)
@@ -45,9 +55,16 @@ string Game::winner()
     {
         throw runtime_error("there is only one player");
     }
-    return (players()[0]);
+    return (players()[0]);      // by player func the first in one array of active is the winner
 }
 
+/**
+ * @brief add player to the vector of plyers and to the map
+ * 
+ * @param player 
+ * @return true 
+ * @return false 
+ */
 bool Game::addPlayer(Player& player)
 {
     // get the id string for the player
@@ -58,13 +75,20 @@ bool Game::addPlayer(Player& player)
         return (false);
     }
     
-    player.setActive(true);
+    player.setActive(true);             // active player
     _playersInGame[rname] = &player;
     _players.push_back(&player);
     _countInGame++;
     return (true);
 }
 
+/**
+ * @brief coup player in game side
+ * 
+ * @param player 
+ * @return true 
+ * @return false 
+ */
 bool Game::coupPlayer(const string& player)
 {
     // if player is nigther active nor exists that return that it didn't succeded
@@ -78,6 +102,13 @@ bool Game::coupPlayer(const string& player)
     
 }
 
+/**
+ * @brief decouping - retriving player
+ * 
+ * @param player 
+ * @return true 
+ * @return false 
+ */
 bool Game::deCoupPlayer(const string& player)
 {
     // if player is active already or not exists that it failed to to the action
@@ -176,6 +207,15 @@ bool Game::isPlayerTurn(const string& rname)
     return (isActive(rname) && _playersInGame[rname] == _players[_playerIndex]);
 }
 
+/**
+ * @brief make a tranfer of coins from src to dest
+ * 
+ * @param srcPlyr source id string
+ * @param dstPlyr dest id string
+ * @param amount number of coins
+ * @param isActiveFlag is activity is needed
+ * @return int 
+ */
 int Game::moveAmount(const string& srcPlyr, const string& dstPlyr, int amount, bool isActiveFlag)
 {
     if(!isPlayerIn(srcPlyr) || !isPlayerIn(dstPlyr))
