@@ -6,10 +6,11 @@
 
 
 using namespace std;
-using coup::Game;
 
 namespace coup
 {
+    class Game;     // sol for cycled referance
+
     class Player
     {
         public:
@@ -20,16 +21,20 @@ namespace coup
             virtual void coup(Player& player);
             string role() const;
             int coins() const;
-            void throwIfNotYourTurn() const;
+            void throwIfNotYourTurn();
             void incCoins(int diff);
             vector<string> getLastAction();
             void cleanLastAction() {_lastAction.clear();}
+            string getRoleAndName();
             string getName() {return _name;}
+            bool getActive() const;
+            void setActive(bool status);
             
             
         private:            
             string _name;
             string _role;
+            bool _active;
         
         protected:
             // only ones who can create the game can change the couping

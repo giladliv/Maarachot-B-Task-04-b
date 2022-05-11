@@ -1,8 +1,9 @@
 #include "Player.hpp"
 
+using coup::Game;
 using coup::Player;
 
-Player::Player(Game& game, const string& name, const string& role) : _game(game), _coins(0)
+Player::Player(Game& game, const string& name, const string& role) : _game(game), _coins(0), _active(true)
 {
     _name = name;
     _role = role;
@@ -19,7 +20,7 @@ Player::Player(Game& game, const string& name, const string& role) : _game(game)
     }
 
     // check if the player already started
-    if (!_game.addPlayer(name))
+    if (!_game.addPlayer(*this))
     {
         throw ("player name alrady exists");
     }
@@ -77,7 +78,7 @@ void Player::coup(Player& player)
     }
 
     // first chaeck if couping right
-    if (!_game.coupPlayer(player._name))
+    if (!_game.coupPlayer(player.getRoleAndName()))
     {
         throw runtime_error("coup on illegal player - not active");
     }
@@ -86,7 +87,7 @@ void Player::coup(Player& player)
     _coins -= COUP_PRICE;
 
     // update the action
-    _lastAction = vector<string>{"coup", player.getName()};
+    _lastAction = vector<string>{"coup", player.getRoleAndName()};
 
     // set the next player in game
     _game.setNextInRound();
@@ -103,6 +104,21 @@ int Player::coins() const
     return _coins;
 }
 
+string Player::getRoleAndName()
+{
+    return (_role + "::" + _name);
+}
+
+bool Player::getActive() const
+{
+    return _active;
+}
+
+void Player::setActive(bool status)
+{
+    _active = status;
+}
+
 void Player::throwIfMaxCoins() const
 {
     if (_coins >= MAX_COINS)
@@ -112,9 +128,9 @@ void Player::throwIfMaxCoins() const
     }
 }
 
-void Player::throwIfNotYourTurn() const
+void Player::throwIfNotYourTurn()
 {
-    if (_game.turn() != _name)
+    if (!_game.isPlayerTurn(getRoleAndName()))
     {
         throw runtime_error("this is not your turn");
     }
@@ -143,7 +159,7 @@ void Player::throwForBlocking(Player& player, const vector<string>& roles)
     _game.throwIfNotEnoughPlayers();
     throwIfNotInSameGame(player);
     // check thatit isnt the players turn
-    if (_game.turn() == player.getName())
+    if (_game.isPlayerTurn(player.getRoleAndName()))
     {
         throw runtime_error("blocking failed because the blocked player turn has arrived");
     }

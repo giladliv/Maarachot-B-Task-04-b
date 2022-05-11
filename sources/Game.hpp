@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <algorithm>
+#include "Player.hpp"
 
 #define MAX_COINS 10
 #define COUP_PRICE 7
@@ -14,15 +15,17 @@
 
 using namespace std;
 
-
 namespace coup
 {
+    class Player;
+
     class Game
     {
     private:
         unsigned int _playerIndex;
-        vector<string> _players;
-        unordered_map<string, bool> _playersInGame;
+        //vector<string> _players;
+        vector<Player*> _players;
+        unordered_map<string, Player*> _playersInGame;
         int _countInGame;
         bool _gameInSession;
         bool isActive(unsigned int index);
@@ -33,7 +36,7 @@ namespace coup
         string turn();
         vector<string> players();
         string winner();
-        bool addPlayer(const string& name);
+        bool addPlayer(Player& player);
         bool coupPlayer(const string& player);
         bool deCoupPlayer(const string& player);
         bool isActive(const string& player);
@@ -42,6 +45,9 @@ namespace coup
         bool isGameFull();
         bool isGameInSession() { return _gameInSession; }
         void updateGameSession() { _gameInSession = true; }
+        bool isPlayerIn(const string&player);
+        bool isPlayerTurn(const string& rname);
+        int moveAmount(const string& srcPlyr, const string& dstPlyr, int amount, bool isActiveFlag = true);
         
     };
     

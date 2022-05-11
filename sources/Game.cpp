@@ -1,5 +1,6 @@
 #include "Game.hpp"
 using coup::Game;
+using coup::Player;
 
 
 Game::Game() : _playerIndex(0), _countInGame(0), _gameInSession(false)
@@ -16,7 +17,7 @@ string Game::turn()
     {
         throw runtime_error("there are no players in game");
     }
-    return (_players[_playerIndex]);
+    return (_players[_playerIndex]->getName());
 }
 
 vector<string> Game::players()
@@ -25,9 +26,9 @@ vector<string> Game::players()
     for (unsigned int i = 0; i < _players.size(); i++)
     {
         // if the player is active push it to the end
-        if (isActive(_players[i]))
+        if (isActive(i))
         {
-            playersCurr.push_back(_players[i]);
+            playersCurr.push_back(_players[i]->getName());
         }
     }
     
@@ -47,15 +48,19 @@ string Game::winner()
     return (players()[0]);
 }
 
-bool Game::addPlayer(const string& name)
+bool Game::addPlayer(Player& player)
 {
-    if (_playersInGame.find(name) != _playersInGame.end())
+    // get the id string for the player
+    string rname = player.getRoleAndName();
+
+    if (_playersInGame.find(rname) != _playersInGame.end())
     {
         return (false);
     }
     
-    _playersInGame[name] = true;
-    _players.push_back(name);
+    player.setActive(true);
+    _playersInGame[rname] = &player;
+    _players.push_back(&player);
     _countInGame++;
     return (true);
 }
@@ -67,7 +72,7 @@ bool Game::coupPlayer(const string& player)
     {
         return (false);
     }
-    _playersInGame[player] = false;
+    _playersInGame[player]->setActive(false);
     _countInGame--;
     return (true);
     
@@ -76,11 +81,11 @@ bool Game::coupPlayer(const string& player)
 bool Game::deCoupPlayer(const string& player)
 {
     // if player is active already or not exists that it failed to to the action
-    if (isActive(player) || _playersInGame.find(player) == _playersInGame.end())
+    if (isActive(player) || !isPlayerIn(player))
     {
         return (false);
     }
-    _playersInGame[player] = true;
+    _playersInGame[player]->setActive(true);
     _countInGame++;
     return (true);
 }
@@ -97,7 +102,7 @@ bool Game::isActive(const string& player)
     try
     {
         // if exists return the value
-        return (_playersInGame[player]);
+        return (_playersInGame[player]->getActive());
     }
     catch(const std::exception& e)
     {
@@ -117,7 +122,7 @@ bool Game::isActive(unsigned int index)
     try
     {
         // if exists return the value
-        return (isActive(_players[index]));
+        return (_players[index]->getActive());
     }
     catch(const std::exception& e)
     {
@@ -138,7 +143,7 @@ void Game::setNextInRound()
         unsigned int len = _playersInGame.size();
         do
         {
-            _playerIndex = (_playerIndex + 1) % len;
+            _playerIndex = ((_playerIndex % len) + 1) % len;
         } while (!isActive(_playerIndex));
         
         // after each (non-block) move that ocured successfuly update that the game has been started
@@ -160,3 +165,43 @@ bool Game::isGameFull()
 {
     return (_players.size() >= MAX_PLAYERS);
 }
+
+bool Game::isPlayerIn(const string& player)
+{
+    return (_playersInGame.find(player) != _playersInGame.end());
+}
+
+bool Game::isPlayerTurn(const string& rname)
+{
+    return (isActive(rname) && _playersInGame[rname] == _players[_playerIndex]);
+}
+
+int Game::moveAmount(const string& srcPlyr, const string& dstPlyr, int amount, bool isActiveFlag)
+{
+    if(!isPlayerIn(srcPlyr) || !isPlayerIn(dstPlyr))
+    {
+        throw runtime_error("one or more of the 2 players are not in the game");
+    }
+    if (isActiveFlag && (!isActive(srcPlyr) || !isActive(dstPlyr)))
+    {
+        throw runtime_error("the two players must be active");
+    }
+
+    Player& src = *_playersInGame[srcPlyr];
+    Player& dest = *_playersInGame[dstPlyr];
+    
+    // if there are lower amout of coins from src take all of player's coins
+    amount = src.coins() < amount ? src.coins() : amount;
+
+    if (amount == 0)
+    {
+        throw runtime_error("cannot transport 0 coins");
+    }
+
+    // make the transphare
+    src.incCoins(-amount);  // reduce amount
+    dest.incCoins(amount);  // increase amount
+
+    return (amount);
+}
+

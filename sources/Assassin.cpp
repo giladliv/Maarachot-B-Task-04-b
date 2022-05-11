@@ -29,7 +29,7 @@ void Assassin::coup(Player& player)
     {
         // by using the coup older function we will pay only 3
         Player::coup(player);
-        _lastAction = vector<string>{"assasination", player.getName()};
+        _lastAction = vector<string>{"assasination", player.getRoleAndName()};
     }
     catch(const std::exception& e)
     {

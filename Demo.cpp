@@ -41,6 +41,11 @@ int main() {
 		contessa.income();
 	}
 	// each one has 6 coins
+	for (const string& s: game_11.players())
+	{
+		cout << s << ", ";
+	}
+	cout << endl;
 	try
 	{
 		assassin.coup(ambassador); // assassin 3
@@ -50,6 +55,10 @@ int main() {
 		duke.block(assassin2); // assassin2 6
 		ambassador.transfer(assassin,contessa); // assassin 2, contessa 7
 		captain.steal(contessa); // contessa 5, captain 8
+		for (const string& sy: captain.getLastAction())
+		{
+			cout << sy << endl;
+		}
 		ambassador.block(captain); // contessa 7, captain 6
 		cout << contessa.coins() << endl;
 		contessa.coup(duke); // contessa 0
