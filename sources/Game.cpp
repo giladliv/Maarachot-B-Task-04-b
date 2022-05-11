@@ -22,7 +22,7 @@ string Game::turn()
 vector<string> Game::players()
 {
     vector<string> playersCurr;
-    for (int i = 0; i < _players.size(); i++)
+    for (unsigned int i = 0; i < _players.size(); i++)
     {
         // if the player is active push it to the end
         if (isActive(_players[i]))
@@ -36,11 +36,11 @@ vector<string> Game::players()
 
 string Game::winner()
 {
-    if (_countInGame == 1)
+    if (_countInGame != 1)
     {
-        return (players()[0]);
+        throw runtime_error("there is no winner yet");
     }
-    return ("");
+    return (players()[0]);
 }
 
 bool Game::addPlayer(const string& name)
@@ -108,7 +108,7 @@ bool Game::isActive(const string& player)
  * @return true 
  * @return false 
  */
-bool Game::isActive(int index)
+bool Game::isActive(unsigned int index)
 {
     try
     {
@@ -129,9 +129,9 @@ bool Game::isActive(int index)
  */
 void Game::setNextInRound()
 {
-    if (_countInGame > 1 || _countInGame == 1 && !isActive(_playerIndex))
+    if (_countInGame > 1 || (_countInGame == 1 && !isActive(_playerIndex)))
     {
-        int len = _playersInGame.size();
+        unsigned int len = _playersInGame.size();
         do
         {
             _playerIndex = (_playerIndex + 1) % len;
@@ -142,8 +142,13 @@ void Game::setNextInRound()
 void Game::throwIfNotEnoughPlayers()
 {
     int len = _players.size();
-    if (len < 2 || len > 6)
+    if (len < MIN_PLAYERS || len > MAX_PLAYERS)
     {
         throw runtime_error("not valid number of players must be 2-6, there are: " + to_string(len));
     }
+}
+
+bool Game::isGameFull()
+{
+    return (_players.size() >= MAX_PLAYERS);
 }

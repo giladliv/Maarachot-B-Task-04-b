@@ -13,17 +13,17 @@ Contessa::~Contessa()
 void Contessa::block(Player& player)
 {
     // check the blocking incident
-    throwForBlocking(player, {"Assasin"});
+    throwForBlocking(player, {"Assassin"});
 
     // check his last action
     vector<string> act = player.getLastAction();
-    if (act.size() != 2 || act[0] != "Assasin")
+    if (act.size() != 2 || act[0] != "assasination")
     {
         throw runtime_error("assasination hasn't been occured");
     }
 
     // make the decouping
-    if (!_game.deCoupPlayer(act[0]))
+    if (!_game.deCoupPlayer(act[1]))
     {
         throw runtime_error("blocking failed");
     }

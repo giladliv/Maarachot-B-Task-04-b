@@ -5,6 +5,7 @@
 #include "Player.hpp"
 
 using namespace std;
+#define COIN_STL 2
 
 namespace coup
 {

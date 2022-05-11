@@ -6,13 +6,21 @@ Player::Player(Game& game, const string& name, const string& role) : _game(game)
 {
     _name = name;
     _role = role;
+    if (_game.isGameFull())
+    {
+        throw runtime_error("the game is full");
+    }
+    if (!_game.addPlayer(name))
+    {
+        throw ("player name alrady exists");
+    }
 }
 
 Player::~Player()
 {
 }
 
-void Player::throwIfMaxCoins()
+void Player::throwIfMaxCoins() const
 {
     if (_coins >= MAX_COINS)
     {
@@ -21,7 +29,7 @@ void Player::throwIfMaxCoins()
     }
 }
 
-void Player::throwIfNotYourTurn()
+void Player::throwIfNotYourTurn() const
 {
     if (_game.turn() != _name)
     {
@@ -76,12 +84,14 @@ void Player::coup(Player& player)
         throw runtime_error(sErr);
     }
 
-    // remove the coins number and remove from active ones
-    _coins -= COUP_PRICE;
+    // first chaeck if couping right
     if (!_game.coupPlayer(player._name))
     {
         throw runtime_error("coup on illegal player - not active");
     }
+
+    // remove the coins number and remove from active ones
+    _coins -= COUP_PRICE;
 
     // update the action
     _lastAction = vector<string>{"coup", player.getName()};
@@ -119,13 +129,16 @@ vector<string> Player::getLastAction()
     return _lastAction;
 }
 
-void Player::throwForBlocking(Player& player, const vector<string>& roles = {})
+void Player::throwForBlocking(Player& player, const vector<string>& roles)
 {
     _game.throwIfNotEnoughPlayers();
     throwIfNotInSameGame(player);
-        player.throwIfNotYourTurn();
+    if (_game.turn() == player.getName())
+    {
+        throw runtime_error("blocking failed because the blocked player turn has arrived");
+    }
     // check that the player ia an assasin
-    for (string roleOther: roles)
+    for (const string& roleOther: roles)
     {
         if (player.role() != roleOther)
         {

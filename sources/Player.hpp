@@ -13,17 +13,19 @@ namespace coup
     class Player
     {
         public:
-            const string getName();
+            Player(Game& game, const string& name, const string& role = "");
             ~Player();
             void income();
             void foreign_aid();
             virtual void coup(Player& player);
             string role() const;
             int coins() const;
-            void throwIfNotYourTurn();
+            void throwIfNotYourTurn() const;
             void incCoins(int diff);
             vector<string> getLastAction();
             void cleanLastAction() {_lastAction.clear();}
+            string getName() {return _name;}
+            
             
         private:            
             string _name;
@@ -31,11 +33,10 @@ namespace coup
         
         protected:
             // only ones who can create the game can change the couping
-            Player(Game& game, const string& name, const string& role = "");
             Game& _game;
             int _coins;
             vector<string> _lastAction;
-            void throwIfMaxCoins();
+            void throwIfMaxCoins() const;
             void throwIfNotInSameGame(const Player& player);
             void throwForBlocking(Player& player, const vector<string>& roles = {});
     };
