@@ -37,6 +37,9 @@ StudentTest2.cpp:
 StudentTest3.cpp: 
 	curl https://raw.githubusercontent.com/BenjaminSaldman/coup-a/main/Test.cpp > $@
 
+demo: Demo.o $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $^ -o demo
+
 tidy:
 	clang-tidy $(SOURCES) $(TIDY_FLAGS) --
 
